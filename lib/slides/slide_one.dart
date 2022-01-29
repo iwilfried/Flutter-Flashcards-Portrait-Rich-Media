@@ -3,6 +3,7 @@ import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:substring_highlight/substring_highlight.dart';
 
 import '../models/slide.dart';
 
@@ -81,14 +82,25 @@ class _SlideOneState extends ConsumerState<SlideOne> {
                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
                       ),
                       child: Center(
-                          child: Text(widget.slide.firstSide,
-                              textAlign: TextAlign.center,
-                              style: fontStyles[widget.slide.frontStyle]!(
-                                  textStyle: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.w400,
-                                fontSize: widget.slide.firstSlideFontSize,
-                              )))),
+                          child: SubstringHighlight(
+                        text: widget.slide.firstSide,
+                        terms: widget.slide.highLightFront,
+                        textAlign: TextAlign.center,
+                        textStyleHighlight:
+                            fontStyles[widget.slide.frontStyle]!(
+                                textStyle: TextStyle(
+                          backgroundColor: Colors.yellowAccent,
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.w400,
+                          fontSize: widget.slide.firstSlideFontSize,
+                        )),
+                        textStyle: fontStyles[widget.slide.frontStyle]!(
+                            textStyle: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.w400,
+                          fontSize: widget.slide.firstSlideFontSize,
+                        )),
+                      )),
                     ),
                     back: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -97,9 +109,19 @@ class _SlideOneState extends ConsumerState<SlideOne> {
                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
                       ),
                       child: Center(
-                          child: Text(widget.slide.secondSide,
+                          child: SubstringHighlight(
+                              text: widget.slide.secondSide,
+                              terms: widget.slide.highLightBack,
+                              textStyleHighlight:
+                                  fontStyles[widget.slide.backStyle]!(
+                                      textStyle: TextStyle(
+                                height: 1.7,
+                                backgroundColor: Colors.yellowAccent,
+                                color: Theme.of(context).primaryColor,
+                                fontSize: widget.slide.secondSlideFontSize,
+                              )),
                               textAlign: TextAlign.center,
-                              style: fontStyles[widget.slide.backStyle]!(
+                              textStyle: fontStyles[widget.slide.backStyle]!(
                                   textStyle: TextStyle(
                                 height: 1.7,
                                 color: Theme.of(context).primaryColor,
@@ -110,7 +132,7 @@ class _SlideOneState extends ConsumerState<SlideOne> {
                 ),
                 const Expanded(child: SizedBox()),
                 Container(
-                  width: width * .3,
+                  width: width * .5,
                   decoration: const BoxDecoration(
                       color: Colors.transparent,
                       borderRadius: BorderRadius.all(Radius.circular(5))),

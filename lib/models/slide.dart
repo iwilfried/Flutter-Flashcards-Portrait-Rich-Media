@@ -5,6 +5,8 @@ class Slide {
   double secondSlideFontSize;
   String frontStyle;
   String backStyle;
+  List<String> highLightFront;
+  List<String> highLightBack;
 
   Slide(
       {required this.firstSide,
@@ -12,7 +14,9 @@ class Slide {
       required this.secondSide,
       required this.secondSlideFontSize,
       required this.frontStyle,
-      required this.backStyle});
+      required this.backStyle,
+      required this.highLightFront,
+      required this.highLightBack});
 
   Map<String, dynamic> toJson() => {
         "firstSide": firstSide,
@@ -21,6 +25,8 @@ class Slide {
         "secondSlideFontSize": secondSlideFontSize,
         "frontStyle": frontStyle,
         "backStyle": backStyle,
+        "highLightFront": List<dynamic>.from(highLightFront.map((x) => x)),
+        "highLightBack": List<dynamic>.from(highLightBack.map((x) => x)),
       };
 
   Slide.fromJson(Map<String, dynamic> json)
@@ -29,5 +35,8 @@ class Slide {
         secondSide = json['secondSide'],
         secondSlideFontSize = json["secondSlideFontSize"],
         frontStyle = json['frontStyle'],
-        backStyle = json['backStyle'];
+        backStyle = json['backStyle'],
+        highLightFront =
+            List<String>.from(json["highLightFront"].map((x) => x)),
+        highLightBack = List<String>.from(json["highLightBack"].map((x) => x));
 }

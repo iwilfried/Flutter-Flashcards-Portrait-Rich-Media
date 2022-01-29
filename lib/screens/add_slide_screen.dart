@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flip_card/flip_card.dart';
+import 'package:substring_highlight/substring_highlight.dart';
 
 import '../state_managment/slides_state_manager.dart';
 import '../models/slide.dart';
@@ -16,6 +17,9 @@ class AddSlideScreen extends ConsumerStatefulWidget {
 class _AddSlideScreenState extends ConsumerState<AddSlideScreen> {
   TextEditingController frontController = TextEditingController();
   TextEditingController backController = TextEditingController();
+
+  List<String> highLightedFront = [];
+  List<String> highLightedBack = [];
 
   String frontValue = "";
   String backValue = "";
@@ -53,7 +57,9 @@ class _AddSlideScreenState extends ConsumerState<AddSlideScreen> {
                           secondSide: backValue,
                           secondSlideFontSize: backFontSize,
                           frontStyle: frontStyle,
-                          backStyle: backStyle),
+                          backStyle: backStyle,
+                          highLightBack: highLightedBack,
+                          highLightFront: highLightedFront),
                     );
                 Navigator.pop(context);
               },
@@ -79,14 +85,14 @@ class _AddSlideScreenState extends ConsumerState<AddSlideScreen> {
               keyboardType: TextInputType.multiline,
               maxLines: null,
             ),
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const Text("FontSize:"),
+                      const Expanded(child: Text("FontSize:")),
                       DropdownButton<double>(
                         value: frontFontSize,
                         items: <double>[
@@ -119,13 +125,10 @@ class _AddSlideScreenState extends ConsumerState<AddSlideScreen> {
                       )
                     ],
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const Text("Font Style:"),
+                      const Expanded(child: Text("Font Style:")),
                       DropdownButton<String>(
                         value: frontStyle,
                         items: fontStyles
@@ -147,8 +150,29 @@ class _AddSlideScreenState extends ConsumerState<AddSlideScreen> {
                       )
                     ],
                   ),
-                ),
-              ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Expanded(child: Text("HightLight:")),
+                      TextButton(
+                          style: TextButton.styleFrom(
+                            primary: Colors.white,
+                            backgroundColor: Colors.blueAccent,
+                          ),
+                          onPressed: () {
+                            String text = frontController.selection
+                                .textInside(frontController.text);
+                            setState(() {
+                              highLightedFront.contains(text)
+                                  ? highLightedFront.remove(text)
+                                  : highLightedFront.add(text);
+                            });
+                          },
+                          child: const Text('HighLight selected text'))
+                    ],
+                  ),
+                ],
+              ),
             ),
             const Text("Second Side content"),
             TextField(
@@ -166,14 +190,14 @@ class _AddSlideScreenState extends ConsumerState<AddSlideScreen> {
               keyboardType: TextInputType.multiline,
               maxLines: null,
             ),
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const Text("FontSize:"),
+                      const Expanded(child: Text("FontSize:")),
                       DropdownButton<double>(
                         value: backFontSize,
                         items: <double>[
@@ -203,13 +227,10 @@ class _AddSlideScreenState extends ConsumerState<AddSlideScreen> {
                       )
                     ],
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const Text("Font Style:"),
+                      const Expanded(child: Text("Font Style:")),
                       DropdownButton<String>(
                         value: backStyle,
                         items: fontStyles
@@ -231,8 +252,29 @@ class _AddSlideScreenState extends ConsumerState<AddSlideScreen> {
                       )
                     ],
                   ),
-                ),
-              ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Expanded(child: Text("HightLight:")),
+                      TextButton(
+                          style: TextButton.styleFrom(
+                            primary: Colors.white,
+                            backgroundColor: Colors.blueAccent,
+                          ),
+                          onPressed: () {
+                            String text = backController.selection
+                                .textInside(backController.text);
+                            setState(() {
+                              highLightedBack.contains(text)
+                                  ? highLightedBack.remove(text)
+                                  : highLightedBack.add(text);
+                            });
+                          },
+                          child: const Text('HighLight Selected Text'))
+                    ],
+                  ),
+                ],
+              ),
             ),
             const Divider(),
             const Center(
@@ -258,14 +300,24 @@ class _AddSlideScreenState extends ConsumerState<AddSlideScreen> {
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
                   ),
                   child: Center(
-                      child: Text(frontValue,
-                          textAlign: TextAlign.center,
-                          style: fontStyles[frontStyle]!(
-                              textStyle: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.w400,
-                            fontSize: frontFontSize,
-                          )))),
+                      child: SubstringHighlight(
+                    text: frontValue,
+                    terms: highLightedFront,
+                    textAlign: TextAlign.center,
+                    textStyleHighlight: fontStyles[frontStyle]!(
+                        textStyle: TextStyle(
+                      backgroundColor: Colors.yellowAccent,
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.w400,
+                      fontSize: frontFontSize,
+                    )),
+                    textStyle: fontStyles[frontStyle]!(
+                        textStyle: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.w400,
+                      fontSize: frontFontSize,
+                    )),
+                  )),
                 ),
                 back: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -274,9 +326,18 @@ class _AddSlideScreenState extends ConsumerState<AddSlideScreen> {
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
                   ),
                   child: Center(
-                      child: Text(backValue,
+                      child: SubstringHighlight(
+                          text: backValue,
+                          terms: highLightedBack,
+                          textStyleHighlight: fontStyles[backStyle]!(
+                              textStyle: TextStyle(
+                            height: 1.7,
+                            backgroundColor: Colors.yellowAccent,
+                            color: Theme.of(context).primaryColor,
+                            fontSize: backFontSize,
+                          )),
                           textAlign: TextAlign.center,
-                          style: fontStyles[backStyle]!(
+                          textStyle: fontStyles[backStyle]!(
                               textStyle: TextStyle(
                             height: 1.7,
                             color: Theme.of(context).primaryColor,
